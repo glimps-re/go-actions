@@ -1,0 +1,82 @@
+name: 'glimps-re-go-action'
+description: |
+  Run multiple tools (test, golangci-lint, govulncheck)
+inputs:
+  go-version:
+    description: 'Version of Go to use'
+    required: false
+    default: '1.24'
+  test-cov-threshold:
+    description: 'Minimal coverage for tests to pass'
+    required: false
+    default: 0
+  go-private-repo:
+    description: 'Go private repo to setup'
+    required: false
+    default: ''
+  go-private-token:
+    description: 'Go private token (PAT) to use'
+    required: false
+    default: ''
+  golangci-lint-version:
+    description: 'Golang CI Lint version'
+    required: false
+    default: 'latest'
+runs:
+  using: "composite"
+  steps:
+
+  - name: Set up Go
+    uses: actions/setup-go@v5
+    with:
+      go-version: ${{ inputs.go-version }}
+
+  - if: inputs.go-private-repo != ''
+    shell: bash
+    name: Set up go private repo
+    run: |
+      go env -w GOPRIVATE=${{ inputs.go-private-repo }}
+
+  - if: inputs.go-private-token != ''
+    shell: bash
+    name: Set up go private token
+    run: |
+      git config --global url."https://${{ inputs.go-private-token }}@github.com/".insteadOf "https://github.com/"
+
+  - name: Copy lint config
+    shell: bash
+    run: |
+      if [ -f ".golangci.yml" ]; then
+        echo "Using repo lint config"
+      else
+        cp ${{ github.action_path }}/.golangci.yml .golangci.yml
+        echo "Lint config copied"
+      fi
+
+  - name: golangci-lint
+    uses: golangci/golangci-lint-action@v8
+    with:
+      version: ${{ inputs.golangci-lint-version}}
+
+  - name: build
+    shell: bash
+    run: go build -v ./...
+
+  - name: govulncheck
+    uses: golang/govulncheck-action@v1
+    with:
+      go-version-input: ${{ inputs.go-version }}
+      go-package: ./...
+
+  - name: test
+    shell: bash
+    run: |
+      go test -v ./... -covermode=count -coverprofile=coverage.out
+      go tool cover -func=coverage.out -o=coverage.out
+      totalCoverage=`cat coverage.out | grep 'total' | grep -Eo '[0-9\.]+'`
+      if (( $(echo "$totalCoverage ${{ inputs.test-cov-threshold }}" |awk '{print ($1 > $2)}') )); then 
+        echo "OK"
+      else
+        echo "Current test coverage too low: $totalCoverage"
+        exit 1
+      fi

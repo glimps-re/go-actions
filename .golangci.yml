@@ -1,0 +1,28 @@
+---
+version: "2"
+linters:
+  enable:
+    - gosec         # check security issue.
+    - noctx         # find http request without context.
+    - contextcheck  # check if function uses a non-inherited context.
+    - predeclared   # find code that shadow one of Go predefined identifiers.
+    - unconvert     # remove unnecessary type conversions.
+    - misspell      # finds commonly misspelled english words.
+    - usestdlibvars # detect possibility to use var/const from go standard library.
+    - nilerr        # finds code thats return nil even if it check taht the error is not nil.
+    - gocritic      # provides diagnostics that checks for bugs, performance and style issues.
+    - nolintlint    # check nolint directive.
+    - mirror        # report wrong mirror patterns of bytes/strings usage.
+    - usetesting
+    - errorlint
+    - perfsprint
+    - sloglint
+  settings:
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+formatters:
+  enable:
+    - gofumpt
+issues:
+  max-same-issues: 0
