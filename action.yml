@@ -63,11 +63,18 @@ runs:
     run: go build -v ./...
 
   - name: govulncheck
+    id: govulncheck
     continue-on-error: true
     uses: golang/govulncheck-action@v1
     with:
       go-version-input: ${{ inputs.go-version }}
       go-package: ./...
+
+  - name: Warn on govulncheck failure
+    if: steps.govulncheck.outcome == 'failure'
+    shell: bash
+    run: |
+      echo "::warning:: govulncheck detected vulnerabilities in dependencies. Please review the security report above."
 
   - name: test
     shell: bash
