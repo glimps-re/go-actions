@@ -2,27 +2,33 @@
 version: "2"
 linters:
   enable:
-    - gosec         # check security issue.
-    - noctx         # find http request without context.
     - contextcheck  # check if function uses a non-inherited context.
-    - predeclared   # find code that shadow one of Go predefined identifiers.
-    - unconvert     # remove unnecessary type conversions.
-    - misspell      # finds commonly misspelled english words.
-    - usestdlibvars # detect possibility to use var/const from go standard library.
-    - nilerr        # finds code thats return nil even if it check taht the error is not nil.
+    - copyloopvar   # A linter detects places where loop variables are copied.
+    - errcheck      # Errcheck is a program for checking for unchecked errors in Go code. These unchecked errors can be critical bugs in some cases.
+    - errorlint     # Find code that can cause problems with the error wrapping scheme introduced in Go 1.13.
     - gocritic      # provides diagnostics that checks for bugs, performance and style issues.
+    - gosec         # check security issue.
+    - mirror        # report wrong mirror patterns of bytes/strings usage. 
+    - misspell      # finds commonly misspelled english words.
+    - nilerr        # finds code thats return nil even if it check taht the error is not nil.
+    - noctx         # find http request without context.
     - nolintlint    # check nolint directive.
-    - mirror        # report wrong mirror patterns of bytes/strings usage.
-    - usetesting
-    - errorlint
-    - perfsprint
-    - sloglint
+    - perfsprint    # Checks that fmt.Sprintf can be replaced with a faster alternative.
+    - predeclared   # find code that shadow one of Go predefined identifiers.
+    - sloglint      # Ensure consistent code style when using log/slog.
+    - staticcheck   # It's the set of rules from staticcheck.
+    - unconvert     # remove unnecessary type conversions.
+    - unused        # Checks Go code for unused constants, variables, functions and types.
+    - usestdlibvars # detect possibility to use var/const from go standard library.
+    - usetesting    # Reports uses of functions with replacement inside the testing
   settings:
     nolintlint:
       require-explanation: true
       require-specific: true
+
 formatters:
   enable:
     - gofumpt
+
 issues:
   max-same-issues: 0
