@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.4.0]
+
+### Changed
+
+- Default go version to 1.25
+
 ## [v0.3.0]
 
 ### Added
