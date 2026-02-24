@@ -5,7 +5,7 @@ inputs:
   go-version:
     description: 'Version of Go to use'
     required: false
-    default: '1.25'
+    default: '1.26'
   test-cov-threshold:
     description: 'Minimal coverage for tests to pass'
     required: false
