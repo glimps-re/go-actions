@@ -9,7 +9,7 @@ inputs:
   test-cov-threshold:
     description: 'Minimal coverage for tests to pass'
     required: false
-    default: 0
+    default: '0'
   go-private-repo:
     description: 'Go private repo to setup'
     required: false
@@ -25,6 +25,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+
+  - name: Install git
+    shell: bash
+    run: |
+      if ! command -v git &> /dev/null; then
+        apt-get update && apt-get install -y --no-install-recommends git
+      fi
 
   - name: Set up Go
     uses: actions/setup-go@v5
