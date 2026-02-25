@@ -45,11 +45,13 @@ runs:
 
   - name: Copy lint config
     shell: bash
+    env:
+      ACTION_PATH: ${{ github.action_path }}
     run: |
       if [ -f ".golangci.yml" ]; then
         echo "Using repo lint config"
       else
-        cp ${{ github.action_path }}/.golangci.yml .golangci.yml
+        cp "$ACTION_PATH/.golangci.yml" .golangci.yml
         echo "Lint config copied"
       fi
 
